@@ -181,8 +181,21 @@ def ota(sock: socket.socket, file_path: pathlib.Path):
     end = time.time()
     duration = end - start
     kbps = (size / 1024) / duration if duration > 0 else 0
-    print(f"[OTA] Upload complete – {duration:.2f}s at {kbps:.1f} KB/s")
+    print(f"[OTA] Upload complete - {duration:.2f}s at {kbps:.1f} KB/s")
     print("[OTA] Device will reboot now (if CRC OK)")
+
+    # ---- try reconnect + version check ----
+    print("[OTA] Waiting for device to reboot …")
+    time.sleep(5)
+
+    try:
+        with socket.create_connection((ADDR, PORT), timeout=10) as s2:
+            send_line(s2, f"AUTH {TOKEN}", expect_ok=False)
+            version = send_line(s2, "version", expect_ok=False)
+            print(f"[OTA] Reconnected - firmware version: {version}")
+    except Exception as e:
+        print(f"[OTA] Reconnect failed: {e}")
+
 
 
 def main():

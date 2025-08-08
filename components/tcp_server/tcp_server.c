@@ -9,6 +9,7 @@
 #include <string.h>
 
 #define PORT 8080
+#define FW_VERSION "v1.3.7"
 
 static const char *TAG  = "TCP";
 static const char *AUTH = "hunter2";
@@ -36,11 +37,11 @@ static void client_task(void *arg)
         if (n <= 0) break;
         line[n] = '\0';
 
-        if      (!strncmp(line, "PING", 4))           send(fd, "PONG\n", 5, 0);
+        if (!strncmp(line, "PING", 4)) send(fd, "PONG\n", 5, 0);
 
         else if (!strncmp(line, "AUTH ", 5)) {
-            if (!strcmp(line + 5, AUTH))              send(fd, "OK\n",     3, 0);
-            else                                      send(fd, "DENIED\n", 7, 0);
+            if (!strcmp(line + 5, AUTH)) send(fd, "OK\n", 3, 0);
+            else send(fd, "DENIED\n", 7, 0);
         }
 
         else if (!strncmp(line, "led_on", 6)) {
@@ -51,6 +52,10 @@ static void client_task(void *arg)
         else if (!strncmp(line, "led_off", 7)) {
             cmd_bus_send(CMD_LED_OFF, 0);
             send(fd, "led_off\n", 8, 0);
+        }
+
+        else if (!strncmp(line,"version",7)) {
+            send(fd, FW_VERSION "\n", strlen(FW_VERSION)+1, 0);
         }
 
         else if (!strncmp(line, "OTA ", 4)) {
