@@ -13,8 +13,8 @@
 #include "tcp_server.h"
 
 // Station credentials
-#define STA_SSID       "TN_wifi_D6C00D"  // or "ViceHot"
-#define STA_PASSWORD   "7WDFEWGTNM"      // or "12345678"
+#define STA_SSID       "my_ssid"
+#define STA_PASSWORD   "my_password"
 
 static const char *TAG = "WIFI-TASK";
 static esp_netif_t *sta_netif;
